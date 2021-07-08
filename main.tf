@@ -16,6 +16,14 @@ resource "aws_lambda_function" "epam_query" {
   }
 }
 
+resource "aws_lambda_permission" "apigw" {
+  statement_id = "AllowAPIGatewayInvoke"
+  action = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.epam_query.function_name
+  principal = "apigateway.amazonaws.com"
+  source_arn = "${aws_api_gateway_rest_api.epam_api.execution_arn}/*/*"
+}
+
 resource "aws_iam_role" "epam_query_lambda" {
   name = "epam_query_lambda"
   tags = {
