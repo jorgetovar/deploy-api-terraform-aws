@@ -24,6 +24,25 @@ resource "aws_lambda_permission" "apigw" {
   source_arn = "${aws_api_gateway_rest_api.epam_api.execution_arn}/*/*"
 }
 
+resource "aws_dynamodb_table" "epam_table" {
+  name = "EpamTable"
+  hash_key = "id"
+  billing_mode = "PROVISIONED"
+  read_capacity = 5
+  write_capacity = 5
+  attribute {
+    name = "id"
+    type = "S"
+  }
+}
+
+resource "aws_iam_role_policy" "lambda_policy" {
+  name = "lambda_policy"
+  role = aws_iam_role.epam_query_lambda.id
+  policy = file("policy.json")
+}
+
+
 resource "aws_iam_role" "epam_query_lambda" {
   name = "epam_query_lambda"
   tags = {
